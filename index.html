@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,13 +8,16 @@
     <h1>지원자 도착 알림</h1>
     <p>QR 코드를 스캔한 후, 아래 도착 알림 버튼을 눌러주세요.</p>
     <button id="notifyArrival">도착 알림</button>
+    <p id="message" style="display:none;">알림을 전송했습니다.</p>
 
     <script>
         document.getElementById('notifyArrival').addEventListener('click', function() {
             const now = new Date();
             const timestamp = now.toISOString().replace('T', ' ').split('.')[0];
-            localStorage.setItem('arrivalTime', timestamp);
-            window.location.href = 'arrival.html';
+            const arrivals = localStorage.getItem('arrivals') ? JSON.parse(localStorage.getItem('arrivals')) : [];
+            arrivals.push(`${timestamp} 지원자가 도착하였습니다.`);
+            localStorage.setItem('arrivals', JSON.stringify(arrivals));
+            document.getElementById('message').style.display = 'block';
         });
     </script>
 </body>
