@@ -89,13 +89,30 @@
         <button id="closePopup">닫기</button>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDruraPZxSFwxL8hAGrJQ1BcX6Pr6k_mL0",
+            authDomain: "hr-noti.firebaseapp.com",
+            projectId: "hr-noti",
+            storageBucket: "hr-noti.appspot.com",
+            messagingSenderId: "441592277925",
+            appId: "1:441592277925:web:e99da16837c1edfa54564c",
+            measurementId: "G-5GSK1CH555"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database(app);
+
         document.getElementById('notifyArrival').addEventListener('click', function() {
             const now = new Date();
             const timestamp = now.toISOString().replace('T', ' ').split('.')[0];
-            const arrivals = localStorage.getItem('arrivals') ? JSON.parse(localStorage.getItem('arrivals')) : [];
-            arrivals.push(`${timestamp} 지원자가 도착하였습니다.`);
-            localStorage.setItem('arrivals', JSON.stringify(arrivals));
+            firebase.database().ref('arrivals').push({
+                message: `${timestamp} 지원자가 도착하였습니다.`
+            });
             document.getElementById('arrivalPopup').style.display = 'block';
         });
 
