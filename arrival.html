@@ -30,7 +30,7 @@
             margin: 10px 0;
             border-radius: 8px;
             background: #f9f9f9;
-            transition: background-color 3s;
+            transition: background-color 3s, color 3s;
         }
         .arrival-box.new {
             background-color: #007aff;
@@ -77,11 +77,12 @@
                 newArrivalBox.className = 'arrival-box';
                 newArrivalBox.textContent = arrival;
                 arrivalTimesDiv.appendChild(newArrivalBox);
-                
+
                 if (index === arrivals.length - 1) { // New arrival
                     newArrivalBox.classList.add('new');
                     setTimeout(() => {
-                        newArrivalBox.classList.remove('new');
+                        newArrivalBox.style.backgroundColor = '#f9f9f9';
+                        newArrivalBox.style.color = '#333';
                     }, 3000);
                 }
             });
