@@ -87,17 +87,6 @@
         .popup button:hover {
             background-color: #005bb5;
         }
-        #refreshIcon {
-            display: block;
-            margin: 50px auto;
-            cursor: pointer;
-            width: 100px;
-            height: 100px;
-            transition: transform 0.3s;
-        }
-        #refreshIcon:hover {
-            transform: rotate(360deg);
-        }
     </style>
 </head>
 <body>
@@ -113,8 +102,6 @@
         <p>연락처: 02-2001-2824</p>
         <button id="closePopup">닫기</button>
     </div>
-
-    <img id="refreshIcon" src="dino-refresh.png" alt="Refresh Icon" onclick="refreshPage()">
 
     <script type="module">
         // Firebase configuration
@@ -140,7 +127,12 @@
             const now = new Date();
             const options = { timeZone: 'Asia/Seoul', hour12: false };
             const datePart = now.toLocaleDateString('ko-KR', options).replace(/\./g, '-').trim();
-            const timePart = now.toLocaleTimeString('ko-KR', { hour12: false, timeZone: 'Asia/Seoul' }).replace(/:/g, '시 ').replace(' ', '분 ').concat('초');
+            const timePart = now.toLocaleTimeString('ko-KR', options)
+                                .replace(' ', '')
+                                .replace(/:/g, '시 ')
+                                .replace(/시$/, '시 ')
+                                .replace('분', '분 ')
+                                .replace('초', '초');
             return `${datePart} ${timePart}`;
         }
 
@@ -189,14 +181,6 @@
                 fontSize -= 2;
                 h2Element.style.fontSize = `${fontSize}px`;
             }
-        }
-
-        function refreshPage() {
-            const refreshIcon = document.getElementById('refreshIcon');
-            refreshIcon.src = 'dino-fire.gif'; // Change to fire-breathing gif
-            setTimeout(() => {
-                location.reload();
-            }, 2000); // Delay to show the fire-breathing animation
         }
     </script>
 </body>
