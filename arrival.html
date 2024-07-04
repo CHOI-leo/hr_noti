@@ -10,11 +10,20 @@
             margin: 10px 0;
             width: 300px;
         }
+        #refreshIcon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTguNSAyQzQuODYgMiAyIDQuODYgMiA4LjVzMi44NiA2IDYuNSA2IDYtMi44NiA2LTYtMi44Ni02LTYtNi41ek0xNSAxMEg5di0xaDV2MU0yIDVINXYxSDJWNU0xNSA3aC0zVjZoM1Y3TTEgOGgxMXYxSDFWOCIgc3R5bGU9ImZpbGw6IzAwMDAwMDsiLz48L3N2Zz4=');
+            background-size: cover;
+        }
     </style>
 </head>
 <body>
     <h1>지원자 도착 시간</h1>
+    <button id="resetArrivals">초기화</button>
     <div id="arrivalTimes"></div>
+    <div id="refreshIcon"></div>
 
     <script>
         function loadArrivals() {
@@ -27,7 +36,16 @@
                 newArrivalBox.textContent = arrival;
                 arrivalTimesDiv.appendChild(newArrivalBox);
             });
+            document.getElementById('refreshIcon').style.transform = 'rotate(0deg)';
+            setTimeout(() => {
+                document.getElementById('refreshIcon').style.transform = 'rotate(360deg)';
+            }, 500);
         }
+
+        document.getElementById('resetArrivals').addEventListener('click', function() {
+            localStorage.removeItem('arrivals');
+            loadArrivals();
+        });
 
         window.onload = function() {
             loadArrivals();
