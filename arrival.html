@@ -17,15 +17,21 @@
     <div id="arrivalTimes"></div>
 
     <script>
-        window.onload = function() {
+        function loadArrivals() {
             const arrivals = localStorage.getItem('arrivals') ? JSON.parse(localStorage.getItem('arrivals')) : [];
             const arrivalTimesDiv = document.getElementById('arrivalTimes');
+            arrivalTimesDiv.innerHTML = ''; // Clear existing content
             arrivals.forEach(arrival => {
                 const newArrivalBox = document.createElement('div');
                 newArrivalBox.className = 'arrival-box';
                 newArrivalBox.textContent = arrival;
                 arrivalTimesDiv.appendChild(newArrivalBox);
             });
+        }
+
+        window.onload = function() {
+            loadArrivals();
+            setInterval(loadArrivals, 1000); // Refresh every second
         };
     </script>
 </body>
