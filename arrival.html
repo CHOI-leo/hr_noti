@@ -67,7 +67,24 @@
         <div id="refreshIcon"></div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDruraPZxSFwxL8hAGrJQ1BcX6Pr6k_mL0",
+            authDomain: "hr-noti.firebaseapp.com",
+            projectId: "hr-noti",
+            storageBucket: "hr-noti.appspot.com",
+            messagingSenderId: "441592277925",
+            appId: "1:441592277925:web:e99da16837c1edfa54564c",
+            measurementId: "G-5GSK1CH555"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database(app);
+
         let originalTitle = document.title;
         let titleInterval;
 
@@ -88,39 +105,39 @@
         }
 
         function loadArrivals() {
-            const arrivals = localStorage.getItem('arrivals') ? JSON.parse(localStorage.getItem('arrivals')) : [];
-            const arrivalTimesDiv = document.getElementById('arrivalTimes');
-            arrivalTimesDiv.innerHTML = ''; // Clear existing content
-            arrivals.forEach((arrival, index) => {
-                const newArrivalBox = document.createElement('div');
-                newArrivalBox.className = 'arrival-box';
-                newArrivalBox.textContent = arrival;
-                arrivalTimesDiv.appendChild(newArrivalBox);
+            firebase.database().ref('arrivals').on('value', (snapshot) => {
+                const arrivals = snapshot.val() ? Object.values(snapshot.val()) : [];
+                const arrivalTimesDiv = document.getElementById('arrivalTimes');
+                arrivalTimesDiv.innerHTML = ''; // Clear existing content
+                arrivals.forEach((arrival, index) => {
+                    const newArrivalBox = document.createElement('div');
+                    newArrivalBox.className = 'arrival-box';
+                    newArrivalBox.textContent = arrival.message;
+                    arrivalTimesDiv.appendChild(newArrivalBox);
 
-                if (index === arrivals.length - 1) { // New arrival
-                    newArrivalBox.classList.add('new');
-                    setTimeout(() => {
-                        newArrivalBox.style.backgroundColor = '#f9f9f9';
-                        newArrivalBox.style.color = '#333';
-                    }, 3000);
-                    startBlinkingTitle(); // Start blinking title on new arrival
-                }
+                    if (index === arrivals.length - 1) { // New arrival
+                        newArrivalBox.classList.add('new');
+                        setTimeout(() => {
+                            newArrivalBox.style.backgroundColor = '#f9f9f9';
+                            newArrivalBox.style.color = '#333';
+                        }, 3000);
+                        startBlinkingTitle(); // Start blinking title on new arrival
+                    }
+                });
+                document.getElementById('refreshIcon').style.transform = 'rotate(0deg)';
+                setTimeout(() => {
+                    document.getElementById('refreshIcon').style.transform = 'rotate(360deg)';
+                }, 500);
             });
-            document.getElementById('refreshIcon').style.transform = 'rotate(0deg)';
-            setTimeout(() => {
-                document.getElementById('refreshIcon').style.transform = 'rotate(360deg)';
-            }, 500);
         }
 
         document.getElementById('resetArrivals').addEventListener('click', function() {
-            localStorage.removeItem('arrivals');
-            loadArrivals();
+            firebase.database().ref('arrivals').remove();
             stopBlinkingTitle(); // Stop blinking title on reset
         });
 
         window.onload = function() {
             loadArrivals();
-            setInterval(loadArrivals, 1000); // Refresh every second
         };
 
         window.onfocus = function() {
