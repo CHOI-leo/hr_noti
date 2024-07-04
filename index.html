@@ -41,6 +41,38 @@
         button:hover {
             background-color: #005bb5;
         }
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1000;
+        }
+        .popup h2 {
+            margin: 0 0 10px;
+        }
+        .popup p {
+            margin: 10px 0;
+        }
+        .popup button {
+            background-color: #007aff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .popup button:hover {
+            background-color: #005bb5;
+        }
     </style>
 </head>
 <body>
@@ -50,6 +82,13 @@
         <button id="notifyArrival">도착 알림</button>
     </div>
 
+    <div class="popup" id="arrivalPopup">
+        <h2>알림을 전송했습니다</h2>
+        <p>잠시 기다리시면 인사담당자가 인솔하러 갈 것입니다.</p>
+        <p>연락처: 02-2001-2824</p>
+        <button id="closePopup">닫기</button>
+    </div>
+
     <script>
         document.getElementById('notifyArrival').addEventListener('click', function() {
             const now = new Date();
@@ -57,7 +96,11 @@
             const arrivals = localStorage.getItem('arrivals') ? JSON.parse(localStorage.getItem('arrivals')) : [];
             arrivals.push(`${timestamp} 지원자가 도착하였습니다.`);
             localStorage.setItem('arrivals', JSON.stringify(arrivals));
-            alert('알림을 전송했습니다');
+            document.getElementById('arrivalPopup').style.display = 'block';
+        });
+
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('arrivalPopup').style.display = 'none';
         });
 
         const welcomeMessages = [
