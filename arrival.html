@@ -30,6 +30,11 @@
             margin: 10px 0;
             border-radius: 8px;
             background: #f9f9f9;
+            transition: background-color 3s;
+        }
+        .arrival-box.new {
+            background-color: #007aff;
+            color: #fff;
         }
         button {
             background-color: #007aff;
@@ -67,11 +72,18 @@
             const arrivals = localStorage.getItem('arrivals') ? JSON.parse(localStorage.getItem('arrivals')) : [];
             const arrivalTimesDiv = document.getElementById('arrivalTimes');
             arrivalTimesDiv.innerHTML = ''; // Clear existing content
-            arrivals.forEach(arrival => {
+            arrivals.forEach((arrival, index) => {
                 const newArrivalBox = document.createElement('div');
                 newArrivalBox.className = 'arrival-box';
                 newArrivalBox.textContent = arrival;
                 arrivalTimesDiv.appendChild(newArrivalBox);
+                
+                if (index === arrivals.length - 1) { // New arrival
+                    newArrivalBox.classList.add('new');
+                    setTimeout(() => {
+                        newArrivalBox.classList.remove('new');
+                    }, 3000);
+                }
             });
             document.getElementById('refreshIcon').style.transform = 'rotate(0deg)';
             setTimeout(() => {
