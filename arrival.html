@@ -68,6 +68,25 @@
     </div>
 
     <script>
+        let originalTitle = document.title;
+        let titleInterval;
+
+        function startBlinkingTitle() {
+            if (!titleInterval) {
+                titleInterval = setInterval(() => {
+                    document.title = document.title === originalTitle ? '📢 새로운 도착 알림!' : originalTitle;
+                }, 1000);
+            }
+        }
+
+        function stopBlinkingTitle() {
+            if (titleInterval) {
+                clearInterval(titleInterval);
+                document.title = originalTitle;
+                titleInterval = null;
+            }
+        }
+
         function loadArrivals() {
             const arrivals = localStorage.getItem('arrivals') ? JSON.parse(localStorage.getItem('arrivals')) : [];
             const arrivalTimesDiv = document.getElementById('arrivalTimes');
@@ -84,6 +103,7 @@
                         newArrivalBox.style.backgroundColor = '#f9f9f9';
                         newArrivalBox.style.color = '#333';
                     }, 3000);
+                    startBlinkingTitle(); // Start blinking title on new arrival
                 }
             });
             document.getElementById('refreshIcon').style.transform = 'rotate(0deg)';
@@ -95,11 +115,16 @@
         document.getElementById('resetArrivals').addEventListener('click', function() {
             localStorage.removeItem('arrivals');
             loadArrivals();
+            stopBlinkingTitle(); // Stop blinking title on reset
         });
 
         window.onload = function() {
             loadArrivals();
             setInterval(loadArrivals, 1000); // Refresh every second
+        };
+
+        window.onfocus = function() {
+            stopBlinkingTitle(); // Stop blinking title when window gains focus
         };
     </script>
 </body>
