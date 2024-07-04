@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QR 코드 스캔 및 도착 알림</title>
+</head>
+<body>
+    <h1>지원자 도착 알림</h1>
+    <p>QR 코드를 스캔한 후, 아래 도착 알림 버튼을 눌러주세요.</p>
+    <button id="notifyArrival">도착 알림</button>
+
+    <script>
+        document.getElementById('notifyArrival').addEventListener('click', function() {
+            const now = new Date();
+            const timestamp = now.toISOString().replace('T', ' ').split('.')[0];
+            localStorage.setItem('arrivalTime', timestamp);
+            window.location.href = 'arrival.html';
+        });
+    </script>
+</body>
+</html>
