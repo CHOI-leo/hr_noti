@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,15 +18,14 @@
 
     <script>
         window.onload = function() {
-            const arrivalTime = localStorage.getItem('arrivalTime');
-            if (arrivalTime) {
-                const arrivalTimesDiv = document.getElementById('arrivalTimes');
+            const arrivals = localStorage.getItem('arrivals') ? JSON.parse(localStorage.getItem('arrivals')) : [];
+            const arrivalTimesDiv = document.getElementById('arrivalTimes');
+            arrivals.forEach(arrival => {
                 const newArrivalBox = document.createElement('div');
                 newArrivalBox.className = 'arrival-box';
-                newArrivalBox.textContent = `${arrivalTime} 지원자가 도착하였습니다.`;
+                newArrivalBox.textContent = arrival;
                 arrivalTimesDiv.appendChild(newArrivalBox);
-                localStorage.removeItem('arrivalTime');
-            }
+            });
         };
     </script>
 </body>
