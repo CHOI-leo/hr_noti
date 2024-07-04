@@ -50,12 +50,38 @@
             background-color: #005bb5;
         }
         #refreshIcon {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTguNSAyQzQuODYgMiAyIDQuODYgMiA4LjVzMi44NiA2IDYuNSA2IDYtMi44NiA2LTYtMi44Ni02LTYtNi41ek0xNSAxMEg5di0xaDV2MU0yIDVINXYxSDJWNU0xNSA3aC0zVjZoM1Y3TTEgOGgxMXYxSDFWOCIgc3R5bGU9ImZpbGw6IzAwMDAwMDsiLz48L3N2Zz4=');
+            display: block;
+            margin: 50px auto;
+            cursor: pointer;
+            width: 100px;
+            height: 100px;
+            transition: transform 0.3s;
+        }
+        #fire {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCAxMCI+PHBhdGggZD0iTTUgMEwwIDdoMmwxLTIuNWwxLjUgMS41TDggN0gxMEw1IDB6IiBmaWxsPSJyZWQiLz48L3N2Zz4=');
             background-size: cover;
-            margin-top: 10px;
+            animation: breathFire 1s forwards;
+        }
+        @keyframes breathFire {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
         }
     </style>
 </head>
@@ -64,7 +90,8 @@
         <h1>지원자 도착 시간</h1>
         <button id="resetArrivals">초기화</button>
         <div id="arrivalTimes"></div>
-        <div id="refreshIcon"></div>
+        <img id="refreshIcon" src="dino.png" alt="Refresh Icon" onclick="refreshPage()">
+        <div id="fire"></div>
     </div>
 
     <script type="module">
@@ -126,11 +153,21 @@
                         startBlinkingTitle(); // Start blinking title on new arrival
                     }
                 });
-                document.getElementById('refreshIcon').style.transform = 'rotate(0deg)';
-                setTimeout(() => {
-                    document.getElementById('refreshIcon').style.transform = 'rotate(360deg)';
-                }, 500);
+                triggerRefreshAnimation();
             });
+        }
+
+        function triggerRefreshAnimation() {
+            const refreshIcon = document.getElementById('refreshIcon');
+            const fire = document.getElementById('fire');
+            refreshIcon.style.transform = 'rotate(0deg)';
+            setTimeout(() => {
+                refreshIcon.style.transform = 'rotate(360deg)';
+                fire.style.display = 'block';
+                setTimeout(() => {
+                    fire.style.display = 'none';
+                }, 1000); // Fire animation duration
+            }, 500);
         }
 
         document.getElementById('resetArrivals').addEventListener('click', function() {
