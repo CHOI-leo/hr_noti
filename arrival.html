@@ -51,36 +51,19 @@
         }
         #refreshIcon {
             display: block;
-            margin: 50px auto;
-            cursor: pointer;
-            width: 100px;
-            height: 100px;
-            transition: transform 0.3s;
-        }
-        #fire {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCAxMCI+PHBhdGggZD0iTTUgMEwwIDdoMmwxLTIuNWwxLjUgMS41TDggN0gxMEw1IDB6IiBmaWxsPSJyZWQiLz48L3N2Zz4=');
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTguNSAyQzQuODYgMiAyIDQuODYgMiA4LjVzMi44NiA2IDYuNSA2IDYtMi44NiA2LTYtMi44Ni02LTYtNi41ek0xNSAxMEg5di0xaDV2MU0yIDVINXYxSDJWNU0xNSA3aC0zVjZoM1Y3TTEgOGgxMXYxSDFWOCIgc3R5bGU9ImZpbGw6IzAwMDAwMDsiLz48L3N2Zz4=');
             background-size: cover;
-            animation: breathFire 1s forwards;
+            animation: spin 2s linear infinite;
         }
-        @keyframes breathFire {
+        @keyframes spin {
             0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.5);
-            }
-            50% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.2);
+                transform: rotate(0deg);
             }
             100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(1.5);
+                transform: rotate(360deg);
             }
         }
     </style>
@@ -90,8 +73,7 @@
         <h1>지원자 도착 시간</h1>
         <button id="resetArrivals">초기화</button>
         <div id="arrivalTimes"></div>
-        <img id="refreshIcon" src="dino.png" alt="Refresh Icon" onclick="refreshPage()">
-        <div id="fire"></div>
+        <div id="refreshIcon"></div>
     </div>
 
     <script type="module">
@@ -153,21 +135,7 @@
                         startBlinkingTitle(); // Start blinking title on new arrival
                     }
                 });
-                triggerRefreshAnimation();
             });
-        }
-
-        function triggerRefreshAnimation() {
-            const refreshIcon = document.getElementById('refreshIcon');
-            const fire = document.getElementById('fire');
-            refreshIcon.style.transform = 'rotate(0deg)';
-            setTimeout(() => {
-                refreshIcon.style.transform = 'rotate(360deg)';
-                fire.style.display = 'block';
-                setTimeout(() => {
-                    fire.style.display = 'none';
-                }, 1000); // Fire animation duration
-            }, 500);
         }
 
         document.getElementById('resetArrivals').addEventListener('click', function() {
