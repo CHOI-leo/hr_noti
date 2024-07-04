@@ -123,16 +123,23 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        function padZero(number) {
+            return number.toString().padStart(2, '0');
+        }
+
         function getKoreanTimestamp() {
             const now = new Date();
             const options = { timeZone: 'Asia/Seoul', hour12: false };
 
-            const datePart = now.toLocaleDateString('ko-KR', options).split('.').map(part => part.trim().padStart(2, '0')).join('-');
-            const timePart = now.toLocaleTimeString('ko-KR', options)
-                .split(':')
-                .map((part, index) => index === 0 ? part.padStart(2, '0') + '시' : (index === 1 ? part.padStart(2, '0') + '분' : part.padStart(2, '0') + '초'))
-                .join('');
-            return `${datePart} ${timePart}`;
+            const year = now.toLocaleDateString('ko-KR', options).split('.')[0].trim();
+            const month = padZero(now.getMonth() + 1);
+            const day = padZero(now.getDate());
+
+            const hours = padZero(now.getHours());
+            const minutes = padZero(now.getMinutes());
+            const seconds = padZero(now.getSeconds());
+
+            return `${year}-${month}-${day} ${hours}시${minutes}분${seconds}초`;
         }
 
         document.getElementById('notifyArrival').addEventListener('click', function() {
