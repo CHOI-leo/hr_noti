@@ -127,7 +127,12 @@
             const now = new Date();
             const options = { timeZone: 'Asia/Seoul', hour12: false };
             const datePart = now.toLocaleDateString('ko-KR', options).replace(/\./g, '-').trim();
-            const timePart = now.toLocaleTimeString('ko-KR', { hour12: false, timeZone: 'Asia/Seoul' }).replace(/:/g, '시 ').replace(' ', '분 ').concat('초');
+            const timePart = now.toLocaleTimeString('ko-KR', options)
+                                .replace(' ', '')
+                                .replace(/:/g, '시 ')
+                                .replace(/시$/, '시 ')
+                                .replace('분', '분 ')
+                                .replace('초', '초');
             return `${datePart} ${timePart}`;
         }
 
