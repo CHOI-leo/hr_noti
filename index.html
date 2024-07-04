@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>강북삼성병원 인사전략파트 지원자 도착알림</title>
+    <title>지원자 도착 시간</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -13,100 +13,73 @@
             padding: 0;
         }
         .container {
-            max-width: 90%;
-            margin: 100px auto;
+            max-width: 700px;
+            margin: 50px auto;
             padding: 20px;
             background: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
         h1 {
-            font-size: 72px;
+            font-size: 24px;
             margin-bottom: 20px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
-        .instruction {
-            font-size: 48px;
-            margin-bottom: 30px;
-            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+        .arrival-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: #f9f9f9;
+            transition: background-color 3s, color 3s;
+        }
+        .arrival-box.new {
+            background-color: #007aff;
+            color: #fff;
         }
         button {
             background-color: #007aff;
             color: #fff;
             border: none;
-            padding: 30px 60px;
-            font-size: 48px;
+            padding: 10px 20px;
+            font-size: 16px;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s;
-            width: 100%;
-            box-sizing: border-box;
         }
         button:hover {
             background-color: #005bb5;
         }
-        .popup {
-            display: none;
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            padding: 20px;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            z-index: 1000;
-            text-align: center;
+        #refreshIcon {
+            display: block;
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTExIDEuNWEuNS41IDAgMDEuNS0uNWgzLjVBLjUuNSAwIDAwMTUgMGgtMy41QS41LjUgMCAwMDEgMS4yaDEuNmE5LjkgOS45IDAgMDAtOC4yIDguMi42LjYgMCAwMDAgMS4yQzQuOCA2LjggNi45IDUgMTAgNSAwIDAgMTEuNSA1em0tLjMgMTBhLjUuNSAwIDAwLS41LjV2My4zYS41LjUgMCAwMDAuNS41SDIybC0yLTIuNi0yLjUgMi41LS41LjV2LTMuN2EuNS41IDAgMDAuNS0uNWguNWE5LjkgOS45IDAgMDA3LjQtNC4xLjUuNSAwIDAwLS41LjVBNy45IDcuOSAwIDExIDguNyAxMi41eiIgZmlsbD0iIzAwMDAwMCIvPjwvc3ZnPg==');
+            background-size: cover;
+            animation: spin 2s linear infinite;
         }
-        .popup h2 {
-            margin: 0 0 10px;
-            font-size: 64px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .popup p {
-            margin: 10px 0;
-            font-size: 48px;
-        }
-        .popup button {
-            background-color: #007aff;
-            color: #fff;
-            border: none;
-            padding: 20px 40px;
-            font-size: 48px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .popup button:hover {
-            background-color: #005bb5;
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 id="welcomeMessage"></h1>
-        <p class="instruction">아래 도착알림 버튼을 눌러<br>인사담당자에게 도착알림을 보내주세요.</p>
-        <button id="notifyArrival">도착 알림</button>
-    </div>
-
-    <div class="popup" id="arrivalPopup">
-        <h2>담당자에게 도착하신것을 알려드렸습니다</h2>
-        <p>잠시 기다리시면 인사담당자가 인솔하여 드리겠습니다. 잠시 기다려주세요.</p>
-        <p>연락처: 02-2001-2824</p>
-        <button id="closePopup">닫기</button>
+        <h1>지원자 도착 시간</h1>
+        <button id="resetArrivals">초기화</button>
+        <div id="arrivalTimes"></div>
+        <div id="refreshIcon"></div>
     </div>
 
     <script type="module">
         // Firebase configuration
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDruraPZxSFwxL8hAGrJQ1BcX6Pr6k_mL0",
@@ -123,65 +96,71 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        let originalTitle = document.title;
+        let titleInterval;
+
+        function startBlinkingTitle() {
+            if (!titleInterval) {
+                titleInterval = setInterval(() => {
+                    document.title = document.title === originalTitle ? '📢 새로운 도착 알림!' : originalTitle;
+                }, 1000);
+            }
+        }
+
+        function stopBlinkingTitle() {
+            if (titleInterval) {
+                clearInterval(titleInterval);
+                document.title = originalTitle;
+                titleInterval = null;
+            }
+        }
+
         function getKoreanTimestamp() {
             const now = new Date();
             const options = { timeZone: 'Asia/Seoul', hour12: false };
-            const datePart = now.toLocaleDateString('ko-KR', options).replace(/\./g, '-').trim();
+            const datePart = now.toLocaleDateString('ko-KR', options).split('.').map(part => part.trim().padStart(2, '0')).join('-');
             const timePart = now.toLocaleTimeString('ko-KR', options)
-                                .replace(' ', '')
-                                .replace(/:/g, '시 ')
-                                .replace(/시$/, '시 ')
-                                .replace('분', '분 ')
-                                .replace('초', '초');
+                                .split(':')
+                                .map((part, index) => index === 0 ? part.padStart(2, '0') + '시' : (index === 1 ? part.padStart(2, '0') + '분' : part.padStart(2, '0') + '초'))
+                                .join('');
             return `${datePart} ${timePart}`;
         }
 
-        document.getElementById('notifyArrival').addEventListener('click', function() {
-            const timestamp = getKoreanTimestamp();
-            push(ref(database, 'arrivals'), {
-                message: `${timestamp} 지원자가 도착하였습니다.`
-            }).then(() => {
-                document.getElementById('arrivalPopup').style.display = 'block';
-                adjustFontSize();
-            }).catch(error => {
-                console.error('Error writing to database', error);
+        function loadArrivals() {
+            onValue(ref(database, 'arrivals'), (snapshot) => {
+                const arrivals = snapshot.val() ? Object.values(snapshot.val()) : [];
+                const arrivalTimesDiv = document.getElementById('arrivalTimes');
+                arrivalTimesDiv.innerHTML = ''; // Clear existing content
+                arrivals.forEach((arrival, index) => {
+                    const newArrivalBox = document.createElement('div');
+                    newArrivalBox.className = 'arrival-box';
+                    newArrivalBox.textContent = arrival.message;
+                    arrivalTimesDiv.appendChild(newArrivalBox);
+
+                    if (index === arrivals.length - 1) { // New arrival
+                        newArrivalBox.classList.add('new');
+                        setTimeout(() => {
+                            newArrivalBox.style.backgroundColor = '#f9f9f9';
+                            newArrivalBox.style.color = '#333';
+                        }, 3000);
+                        startBlinkingTitle(); // Start blinking title on new arrival
+                    }
+                });
             });
-        });
-
-        document.getElementById('closePopup').addEventListener('click', function() {
-            document.getElementById('arrivalPopup').style.display = 'none';
-        });
-
-        fetch('welcomeMessages.json')
-            .then(response => response.json())
-            .then(data => {
-                const randomIndex = Math.floor(Math.random() * data.welcomeMessages.length);
-                const welcomeMessage = data.welcomeMessages[randomIndex];
-                const h1Element = document.getElementById('welcomeMessage');
-                h1Element.textContent = welcomeMessage;
-                adjustFontSize();
-            })
-            .catch(error => console.error('Error fetching welcome messages', error));
-
-        function adjustFontSize() {
-            // Adjust font size to fit the welcome message in one line
-            const h1Element = document.getElementById('welcomeMessage');
-            let fontSize = 72; // Initial font size
-            h1Element.style.fontSize = `${fontSize}px`;
-            while (h1Element.scrollWidth > h1Element.clientWidth && fontSize > 10) {
-                fontSize -= 2;
-                h1Element.style.fontSize = `${fontSize}px`;
-            }
-
-            // Adjust font size to fit the popup message in one line
-            const h2Element = document.querySelector('.popup h2');
-            fontSize = 64; // Initial font size for h2
-            h2Element.style.fontSize = `${fontSize}px`;
-            while (h2Element.scrollWidth > h2Element.clientWidth && fontSize > 10) {
-                fontSize -= 2;
-                h2Element.style.fontSize = `${fontSize}px`;
-            }
         }
+
+        document.getElementById('resetArrivals').addEventListener('click', function() {
+            remove(ref(database, 'arrivals'));
+            stopBlinkingTitle(); // Stop blinking title on reset
+        });
+
+        window.onload = function() {
+            loadArrivals();
+        };
+
+        window.onfocus = function() {
+            stopBlinkingTitle(); // Stop blinking title when window gains focus
+        };
     </script>
 </body>
 </html>
