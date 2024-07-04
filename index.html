@@ -123,10 +123,16 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        document.getElementById('notifyArrival').addEventListener('click', function() {
+        function getKoreanTimestamp() {
             const now = new Date();
             const options = { timeZone: 'Asia/Seoul', hour12: false };
-            const timestamp = now.toLocaleString('ko-KR', options).replace(/\. /g, '-').replace(' ', 'T').replace(':', '-').split(',')[0];
+            const datePart = now.toLocaleDateString('ko-KR', options).replace(/\./g, '-').trim();
+            const timePart = now.toLocaleTimeString('ko-KR', { hour12: false, timeZone: 'Asia/Seoul' }).replace(/:/g, '시 ').replace(' ', '분 ').concat('초');
+            return `${datePart} ${timePart}`;
+        }
+
+        document.getElementById('notifyArrival').addEventListener('click', function() {
+            const timestamp = getKoreanTimestamp();
             push(ref(database, 'arrivals'), {
                 message: `${timestamp} 지원자가 도착하였습니다.`
             }).then(() => {
