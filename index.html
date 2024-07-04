@@ -23,10 +23,14 @@
         h1 {
             font-size: 72px;
             margin-bottom: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        p {
+        .instruction {
             font-size: 48px;
             margin-bottom: 30px;
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
         }
         button {
             background-color: #007aff;
@@ -55,10 +59,14 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             z-index: 1000;
+            text-align: center;
         }
         .popup h2 {
             margin: 0 0 10px;
             font-size: 64px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .popup p {
             margin: 10px 0;
@@ -84,7 +92,7 @@
 <body>
     <div class="container">
         <h1 id="welcomeMessage"></h1>
-        <p>아래 도착알림 버튼을 눌러 인사담당자에게 도착알림을 보내주세요.</p>
+        <p class="instruction">아래 도착알림 버튼을 눌러<br>인사담당자에게 도착알림을 보내주세요.</p>
         <button id="notifyArrival">도착 알림</button>
     </div>
 
@@ -117,11 +125,13 @@
 
         document.getElementById('notifyArrival').addEventListener('click', function() {
             const now = new Date();
-            const timestamp = now.toISOString().replace('T', ' ').split('.')[0];
+            const options = { timeZone: 'Asia/Seoul', hour12: false };
+            const timestamp = now.toLocaleString('ko-KR', options).replace(/\. /g, '-').replace(' ', 'T').replace(':', '-').split(',')[0];
             push(ref(database, 'arrivals'), {
                 message: `${timestamp} 지원자가 도착하였습니다.`
             }).then(() => {
                 document.getElementById('arrivalPopup').style.display = 'block';
+                adjustFontSize();
             }).catch(error => {
                 console.error('Error writing to database', error);
             });
@@ -135,9 +145,32 @@
             .then(response => response.json())
             .then(data => {
                 const randomIndex = Math.floor(Math.random() * data.welcomeMessages.length);
-                document.getElementById('welcomeMessage').textContent = data.welcomeMessages[randomIndex];
+                const welcomeMessage = data.welcomeMessages[randomIndex];
+                const h1Element = document.getElementById('welcomeMessage');
+                h1Element.textContent = welcomeMessage;
+                adjustFontSize();
             })
             .catch(error => console.error('Error fetching welcome messages', error));
+
+        function adjustFontSize() {
+            // Adjust font size to fit the welcome message in one line
+            const h1Element = document.getElementById('welcomeMessage');
+            let fontSize = 72; // Initial font size
+            h1Element.style.fontSize = `${fontSize}px`;
+            while (h1Element.scrollWidth > h1Element.clientWidth && fontSize > 10) {
+                fontSize -= 2;
+                h1Element.style.fontSize = `${fontSize}px`;
+            }
+
+            // Adjust font size to fit the popup message in one line
+            const h2Element = document.querySelector('.popup h2');
+            fontSize = 64; // Initial font size for h2
+            h2Element.style.fontSize = `${fontSize}px`;
+            while (h2Element.scrollWidth > h2Element.clientWidth && fontSize > 10) {
+                fontSize -= 2;
+                h2Element.style.fontSize = `${fontSize}px`;
+            }
+        }
     </script>
 </body>
 </html>
