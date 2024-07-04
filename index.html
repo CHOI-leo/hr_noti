@@ -96,6 +96,7 @@
         const firebaseConfig = {
             apiKey: "AIzaSyDruraPZxSFwxL8hAGrJQ1BcX6Pr6k_mL0",
             authDomain: "hr-noti.firebaseapp.com",
+            databaseURL: "https://hr-noti-default-rtdb.firebaseio.com/",
             projectId: "hr-noti",
             storageBucket: "hr-noti.appspot.com",
             messagingSenderId: "441592277925",
@@ -104,8 +105,8 @@
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database(app);
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         document.getElementById('notifyArrival').addEventListener('click', function() {
             const now = new Date();
