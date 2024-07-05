@@ -49,11 +49,15 @@
         button:hover {
             background-color: #005bb5;
         }
+        #enableSound {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>지원자 도착 시간</h1>
+        <button id="enableSound">소리 알림 활성화</button>
         <button id="resetArrivals">초기화</button>
         <div id="arrivalTimes"></div>
     </div>
@@ -78,8 +82,19 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        let audio;
+
         // Create an audio object with the path to the MP3 file
-        const audio = new Audio('assets/audio/Ring06.mp3');
+        document.getElementById('enableSound').addEventListener('click', () => {
+            audio = new Audio('assets/audio/Ring06.mp3');
+            audio.play().then(() => {
+                alert('소리 알림이 활성화되었습니다.');
+                document.getElementById('enableSound').style.display = 'none';
+            }).catch(error => {
+                console.error('Error playing audio:', error);
+                alert('소리 알림을 활성화하지 못했습니다. 다시 시도해주세요.');
+            });
+        });
 
         let originalTitle = document.title;
         let titleInterval;
@@ -118,9 +133,11 @@
                             newArrivalBox.style.color = '#333';
                         }, 3000);
                         // Attempt to play sound
-                        audio.play().catch(error => {
-                            console.error('Error playing audio:', error);
-                        });
+                        if (audio) {
+                            audio.play().catch(error => {
+                                console.error('Error playing audio:', error);
+                            });
+                        }
                         startBlinkingTitle(); // Start blinking title on new arrival
                     }
                 });
