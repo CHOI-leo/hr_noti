@@ -117,7 +117,10 @@
                             newArrivalBox.style.backgroundColor = '#f9f9f9';
                             newArrivalBox.style.color = '#333';
                         }, 3000);
-                        audio.play(); // Play sound on new arrival
+                        // Attempt to play sound
+                        audio.play().catch(error => {
+                            console.error('Error playing audio:', error);
+                        });
                         startBlinkingTitle(); // Start blinking title on new arrival
                     }
                 });
