@@ -100,7 +100,7 @@
         <h2>담당자에게 도착하신것을 알려드렸습니다</h2>
         <p>잠시 기다리시면 인사담당자가 인솔하여 드리겠습니다. 잠시 기다려주세요.</p>
         <p>연락처: 02-2001-2824</p>
-        <button id="closePopup">닫기</button>
+        <button id="closePopup">닫기 (<span id="countdown">10</span>)</button>
     </div>
 
     <script type="module">
@@ -149,6 +149,7 @@
             }).then(() => {
                 document.getElementById('arrivalPopup').style.display = 'block';
                 adjustFontSize();
+                startCountdown();
             }).catch(error => {
                 console.error('Error writing to database', error);
             });
@@ -187,6 +188,19 @@
                 fontSize -= 2;
                 h2Element.style.fontSize = `${fontSize}px`;
             }
+        }
+
+        function startCountdown() {
+            let timeLeft = 10;
+            const countdownElement = document.getElementById('countdown');
+            const countdownInterval = setInterval(() => {
+                timeLeft--;
+                countdownElement.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('arrivalPopup').style.display = 'none';
+                }
+            }, 1000);
         }
     </script>
 </body>
